@@ -18,7 +18,7 @@ void create() {
   string *l_keys;
   int i;
   object ob;
-  
+
   ::create();
   set_property("storage room", 1);
   if(!load_status) call_out("load_lockers", 2);
@@ -33,8 +33,7 @@ void load_lockers() {
   return;
 }
 
-int
- query_is_locker_room() { return 1; }
+int query_is_locker_room() { return 1; }
 
 int receive_objects() {
   if(!::receive_objects()) return 0;
@@ -54,4 +53,3 @@ void init() {
   if(!load_status) load_lockers();
   return;
 }
-

@@ -16,8 +16,7 @@ void do_armageddon() {
     call_out("the_end", 60);
     INFORM_D->do_inform("impending_shutdowns",
       "%^RED%^%^BOLD%^Yes...\nIts that time again...\nAre you ready?\n\n"
-      "The end of the world is upon us...\n\nThe world is over
-populated....\n"
+      "The end of the world is upon us...\n\nThe world is over populated....\n"
       "But do not worry, the world will return...BUT,"
       "\n%^YELLOW%^you have 30 minutes to prepare.");
     time = 1800;
@@ -29,13 +28,14 @@ void abort_shutdown() {
     remove_call_out("the_end_long");
     lock=0;
     INFORM_D->do_inform("impending_shutdowns",
-      "%^BOLD%^%^GREEN%^The world has been saved by a God!!!"
-     
-"\nYou\n\tmay\n\t\tthank\n\t\t\tyour\n\t\t\t\tlucky\n\t\t\t\t\tstars...");
+        "%^BOLD%^%^GREEN%^The world has been saved by a God!!!"
+        "\nYou\n\tmay\n\t\tthank\n\t\t\tyour\n\t\t\t\tlucky\n\t\t\t\t\tstars..."
+    );
     return;
 }
 
-void add_time(int how_much) {
+void add_time(int how_much)
+{
     if(geteuid(previous_object()) != UID_SHUTDOWN) return;
     remove_call_out("the_end");
     remove_call_out("the_end_long");
@@ -48,7 +48,8 @@ void add_time(int how_much) {
     return;
 }
 
-protected void the_end() {
+protected void the_end()
+{
     time -= 60;
 
     if(time < 61) call_out("end_it", 50);
@@ -59,17 +60,18 @@ protected void the_end() {
       "%^BOLD%^%^MAGENTA%^The world will be reborn in %^B_RED%^%^YELLOW%^"
       +time/60+"%^RESET%^%^BOLD%^%^MAGENTA%^ minutes.");
 
-    if(time/60 == 3){
-    lock=1;
-    INFORM_D->do_inform("impending_shutdowns","%^YELLOW%^MUD LOCK ACTIVATED!");
-    INFORM_D->do_inform("impending_shutdowns",
-      "\n%^BOLD%^%^MAGENTA%^Type %^CYAN%^tell gamedriver <whatever>%^MAGENTA%^"
-      " if you want a free ride to the shop!");
-}
+    if(time/60 == 3) {
+        lock=1;
+        INFORM_D->do_inform("impending_shutdowns","%^YELLOW%^MUD LOCK ACTIVATED!");
+        INFORM_D->do_inform("impending_shutdowns",
+        "\n%^BOLD%^%^MAGENTA%^Type %^CYAN%^tell gamedriver <whatever>%^MAGENTA%^"
+        " if you want a free ride to the shop!");
+    }
     let_everyone_know();
 }
 
-protected void the_end_long() {
+protected void the_end_long()
+{
     time -= 240;
 
     if(time < 61) call_out("end_it", 50);
@@ -81,7 +83,8 @@ protected void the_end_long() {
     let_everyone_know();
 }
 
-protected void end_it() {
+protected void end_it()
+{
     time -= 50;
     call_out("shut", 10);
     INFORM_D->do_inform("impending_shutdowns",
@@ -92,7 +95,8 @@ protected void end_it() {
 
 }
 
-protected void shut() {
+protected void shut()
+{
     object *who, ob;
     int i;
 
@@ -109,7 +113,8 @@ protected void shut() {
 int query_time_remaining() { return time; }
 int mud_lock() { return lock; }
 
-void notify_armageddon(object ob) {
+void notify_armageddon(object ob)
+{
     if(!ob) return;
     if(!in_the_know) in_the_know = ({ ob });
     else {
@@ -117,20 +122,22 @@ void notify_armageddon(object ob) {
     }
 }
 
-void clean_up() {
+void clean_up()
+{
     object *tmp;
     int i;
 
     if(!in_the_know) return;
     tmp = ({});
-    for(i=0; i<sizeof(in_the_know); i++) { 
+    for(i=0; i<sizeof(in_the_know); i++) {
         if(!in_the_know[i]) continue;
         tmp += ({ in_the_know[i] });
     }
     in_the_know = tmp;
 }
 
-void let_everyone_know() {
+void let_everyone_know()
+{
     int i;
 
     for(i=0; i<sizeof(in_the_know); i++) {

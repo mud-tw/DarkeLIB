@@ -42,9 +42,9 @@ void set_menu(string *item_names, string *types, int *strengths) {
     }
 }
 
-void set_my_mess(string *msg) { 
+void set_my_mess(string *msg) {
     int i;
-   
+
     for(i=0; i<sizeof(menu_items); i++) {
     	menu[menu_items[i]]["my message"] = msg[i];
     }
@@ -52,7 +52,7 @@ void set_my_mess(string *msg) {
 
 void set_your_mess(string *msg) {
     int i;
- 
+
     for(i=0; i<sizeof(menu_items); i++) {
       menu[menu_items[i]]["your message"] = msg[i];
     }
@@ -96,6 +96,7 @@ int price(object tp, int strength) {
     if(!tp) return cost;
     if((int)tp->query_money(currency) < cost) return 0;
     tp->add_money(currency, -cost);
+
     return cost;
 }
 
@@ -110,58 +111,62 @@ int buy(string str) {
     object ob;
 
     if(!str) {
-      notify_fail(query_cap_name()+" says: What is it you would like?\n");
-      return 0;
+        notify_fail(query_cap_name()+" says: What is it you would like?\n");
+        return 0;
     }
     str = lower_case(str);
     if(member_array(str, menu_items) == -1) {
-      notify_fail(query_cap_name()+" says: I don't serve that.\n");
-      return 0;
+        notify_fail(query_cap_name()+" says: I don't serve that.\n");
+        return 0;
     }
     if(!(cost = price(this_player(), menu[str]["strength"]))) {
-      write(query_cap_name()+" says: You do not have enough "+currency+" for that!\n");
-      say(query_cap_name()+" turns away "+this_player()->query_cap_name()+" for lack of money.\n", this_player());
-      return 1;
+        write(query_cap_name()+" says: You do not have enough "+currency+" for that!\n");
+        say(query_cap_name()+" turns away "+this_player()->query_cap_name()+" for lack of money.\n", this_player());
+        return 1;
     }
     write("You pay "+cost+" "+currency+" coins for a "+str+".\n");
     say(query_cap_name()+" collects some "+currency +" from "+this_player()->query_cap_name()+".\n", this_player());
     if(menu[str]["type"] == "food") {
-      ob = new("std/food");
-      ob->set_name(str);
-      ob->set_id( ({str, "food" }) );
+        ob = new("std/food");
+        ob->set_name(str);
+        ob->set_id( ({str, "food" }) );
     }
     else if(menu[str]["type"] == "dine_in") {
-      if(this_player()->query_stuffed() > 300) {
-        write("You are far to full of food to be allowed to continue eating here....");
-        say(this_player()->query_cap_name()+" is far too bloated to be allowed to continue eating here.");
+        if(this_player()->query_stuffed() > 300) {
+            write("You are far to full of food to be allowed to continue eating here....");
+            say(this_player()->query_cap_name()+" is far too bloated to be allowed to continue eating here.");
+            return 1;
+        }
+        this_player()->add_stuffed(menu[str]["strength"]);
+        if(menu[str]["my message"])
+            write(menu[str]["my message"]);
+        if(menu[str]["your message"])
+            say(this_player()->query_cap_name()+" "+menu[str]["your message"]);
+
         return 1;
-      }
-      this_player()->add_stuffed(menu[str]["strength"]);
-      if(menu[str]["my message"])
-        write(menu[str]["my message"]);
-      if(menu[str]["your message"])
-        say(this_player()->query_cap_name()+" "+menu[str]["your message"]);
-      return 1;
     }
     else if(menu[str]["type"] == "drink_in") {
-      if(this_player()->query_intox() > 300) {
-        write("You are far to intoxicated to be allowed to continue drinking here....");
-        say(this_player()->query_cap_name()+" is far too intoxicated to be allowed to continue drinking here.");
+
+        if(this_player()->query_intox() > 300) {
+            write("You are far to intoxicated to be allowed to continue drinking here....");
+            say(this_player()->query_cap_name()+" is far too intoxicated to be allowed to continue drinking here.");
+            return 1;
+        }
+        this_player()->add_intox(menu[str]["strength"]);
+        this_player()->add_quenched(menu[str]["strength"]);
+
+        if(menu[str]["my message"])
+            write(menu[str]["my message"]);
+        if(menu[str]["your message"])
+            say(this_player()->query_cap_name()+" "+menu[str]["your message"]);
+
         return 1;
-      }
-      this_player()->add_intox(menu[str]["strength"]);
-      this_player()->add_quenched(menu[str]["strength"]);
-      if(menu[str]["my message"])
-        write(menu[str]["my message"]);
-      if(menu[str]["your message"])
-        say(this_player()->query_cap_name()+" "+menu[str]["your message"]);
-      return 1;
-    }
-    else {  
-      ob = new("std/drink");
-      ob->set_name(str);
-      ob->set_type(menu[str]["type"]);
-      ob->set_id( ({ str, "drink" }) );
+
+    } else {
+        ob = new("std/drink");
+        ob->set_name(str);
+        ob->set_type(menu[str]["type"]);
+        ob->set_id( ({ str, "drink" }) );
     }
     ob->set_strength(menu[str]["strength"]);
     ob->set_weight(to_int(2.3*pow(to_float(menu[str]["strength"]), 0.5)));
@@ -176,10 +181,11 @@ int buy(string str) {
     if(menu[str]["my message"]) ob->set_my_mess(menu[str]["my message"]);
     if(menu[str]["your message"]) ob->set_your_mess(menu[str]["your message"]);
     if(ob->move(this_player())) {
-      write("You cannot carry it!\nYou drop a "+str+".\n");
-      say(this_player()->query_cap_name()+" drops a "+str+".\n", this_player());
-      ob->move(environment(this_player()));
+        write("You cannot carry it!\nYou drop a "+str+".\n");
+        say(this_player()->query_cap_name()+" drops a "+str+".\n", this_player());
+        ob->move(environment(this_player()));
     }
+
     return 1;
 }
 
@@ -192,11 +198,14 @@ string *query_menu() { return menu_items; }
 
 nomask void die()
 {
-int i;
-string *currs;
-  currs = query_currencies();
+    int i;
+    string *currs;
+
+    currs = query_currencies();
+
     for(i=0;i < sizeof(currs); i++) {
-	add_money(currs[i], -query_money(currs[i]));
+	    add_money(currs[i], -query_money(currs[i]));
     }
-::die();
+
+    ::die();
 }

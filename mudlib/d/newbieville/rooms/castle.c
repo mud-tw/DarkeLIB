@@ -3,18 +3,18 @@
 
 inherit ROOM;
 void create() {
-  object ob;    
+  object ob;
 
     ::create();
 
-  ob = new("std/bboard");
-  ob->set_name("board");
-  ob->set_id( ({"board", "castle board", "bets"}) );
-  ob->set_board_id("newbieville_castle_board");
-  ob->set_max_posts(50);
-  ob->set_location(ROOMS+"castle");
-  ob->set("short","Newbieville Bulletin Board");
-  ob->set("long",@TEXT
+    ob = new("std/bboard");
+    ob->set_name("board");
+    ob->set_id( ({"board", "castle board", "bets"}) );
+    ob->set_board_id("newbieville_castle_board");
+    ob->set_max_posts(50);
+    ob->set_location(ROOMS+"castle");
+    ob->set("short","Newbieville Bulletin Board");
+    ob->set("long",@TEXT
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 This board is meant to help newbies out as they first begin their journeys
 in Daybreak Ridge. Post guild tips, directions, or anything else that you

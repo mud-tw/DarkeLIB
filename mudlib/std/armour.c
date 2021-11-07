@@ -1,106 +1,57 @@
 //      /std/armour.c
-
 //      from the Nightmare Mudlib
-
 //      the basic inherited armour object
-
 //      created by Descartes of Borg 25 june 1993
-
-
 
 #include <std.h>
 
-
-
 inherit OBJECT;
 
-
-
 private mapping armour_save;
-
 private nosave mapping armour_static;
 
-
-
 void unwear();
-
 void extinguish_glow();
-
 void unequip();
-
 void set_not_equipped();
-
 void set_enh_critical(mixed x);
-
 void set_ac(int x, string type);
-
 void set_illuminate(int x);
-
 void set_limbs(mixed *borg);
-
 void set_wear(mixed val);
-
 void set_remove(mixed val);
-
 void set_type(string str);
-
 int query_ac(string type);
-
 mapping all_base_ac();
-
 void set_short(string desc);
-
 mapping query_all_ac();
-
 string *query_ac_types();
-
 mixed *query_limbs();
-
 string query_wear_string();
-
 object query_wear_func();
-
 mixed query_enh_critical();
-
 string query_remove_string();
-
 object query_remove_func();
-
 string query_type();
-
 object query_worn();
 
-
-
-void init() {
-
+void init()
+{
     ::init();
-
     if(environment(this_object()) != this_player()) return;
 
     add_action("wear", "wear");
-
     add_action("do_remove", "remove");
-
     add_action("illuminate", "illuminate");
-
 }
 
-
-
-void create() {
-
+void create()
+{
     ::create();
-
     armour_save = ([]);
-
     armour_static = ([]);
-
     set_material("metal/iron");
-
 }
-
-
 
 int wear(string str) {
 
@@ -296,7 +247,7 @@ int illuminate(string str) {
 
 
 
-    if(!query_property("magic item") || 
+    if(!query_property("magic item") ||
 
       member_array("illuminate", query_property("magic item")) == -1) return 0;
 
@@ -400,11 +351,11 @@ environment(this_object())->query_cap_name()+"'s "+query_name()+
 
 }
 
- 
+
 
 void unequip() { if(armour_static["worn by"]) unwear(); }
 
- 
+
 
 void set_not_equipped() {
 
@@ -412,7 +363,7 @@ void set_not_equipped() {
 
     if(armour_static["actual limbs"]) map_delete(armour_static, "actual limbs");}
 
- 
+
 
 int remove() {
 
@@ -430,13 +381,13 @@ int remove() {
 
 }
 
- 
+
 
 int move(mixed dest) {
 
     int x;
 
- 
+
 
     if(armour_static["lit"])
 
@@ -462,7 +413,7 @@ void set_enh_critical(mixed x) {
 
 }
 
- 
+
 
 varargs void set_ac(int x, string type) {
 
@@ -488,11 +439,11 @@ varargs void set_ac(int x, string type) {
 
 }
 
- 
+
 
 void set_illuminate(int x) { set_property("magic item", ({ "illuminate" })); }
 
- 
+
 
 void set_limbs(mixed *limbs) {
 
@@ -510,7 +461,7 @@ void set_limbs(mixed *limbs) {
 
 	member_array("left arm", limbs[i]) != -1)
 
-      limbs[i] = distinct_array(limbs[i] + ({ "right arm", "left arm", "first arm", "second arm", 
+      limbs[i] = distinct_array(limbs[i] + ({ "right arm", "left arm", "first arm", "second arm",
 
 		      "third arm", "fourth arm", "first branch", "second branch",
 
@@ -566,7 +517,7 @@ void set_limbs(mixed *limbs) {
 
   }
 
-  armour_static["possible limbs"] = limbs; 
+  armour_static["possible limbs"] = limbs;
 
 }
 
@@ -580,7 +531,7 @@ void set_wear(mixed val) {
 
 }
 
- 
+
 
 void set_remove(mixed val) {
 
@@ -590,7 +541,7 @@ void set_remove(mixed val) {
 
 }
 
- 
+
 
 void set_type(string str) {
 
@@ -610,7 +561,7 @@ void set_type(string str) {
 
 }
 
- 
+
 
 int query_ac(string type) {
 
@@ -752,7 +703,7 @@ string *query_ac_types() {
 
   string *ret;
 
-  
+
 
     if(!armour_save["ac"]) return ({});
 
@@ -768,29 +719,29 @@ string *query_ac_types() {
 
 }
 
- 
+
 
 mixed *query_limbs() { return armour_static["possible limbs"]; }
 
- 
+
 
 mixed query_wear() { return armour_static["wear"]; }
 
- 
+
 
 mixed query_unwear() { return armour_static["unwear"]; }
 
- 
+
 
 string query_type() { return armour_static["type"]; }
 
- 
+
 
 object query_worn() { return armour_static["worn by"]; }
 
- 
 
- 
+
+
 
 string query_short() {
 
@@ -834,7 +785,7 @@ string query_long(string str) {
 
     mixed tmp;
 
-    
+
 
     if(!armour_static["worn by"]) ret = ::query_long(str);
 
@@ -892,15 +843,15 @@ string query_long(string str) {
 
 }
 
- 
+
 
 string *query_actual_limbs() { return armour_static["actual limbs"]; }
 
- 
+
 
 int is_armour() { return 1; }
 
- 
+
 
 void set_struck(mixed val) {
 
@@ -912,5 +863,4 @@ void set_struck(mixed val) {
 
 
 
-mixed query_struck() { return armour_static["struck"]; } 
-
+mixed query_struck() { return armour_static["struck"]; }

@@ -385,48 +385,56 @@ int valid_write(string file, object ob, string fun) {
     } else return 0;
 }
 
-int valid_read(string file, object ob, string fun) {
+int valid_read(string file, object ob, string fun)
+{
     return check_access(file, ob, READ);
 }
 
-nomask int check_access(string file, object ob, int ind) {
+nomask int check_access(string file, object ob, int ind)
+{
     string *path, *grps;
     string euid, tmp, fn;
     int i, j;
 
     while(strlen(file) > 2 && file[0..1] == "//")
-  file = replace_string(file, "/", "", 1);
+        file = replace_string(file, "/", "", 1);
+
     if((euid=geteuid(ob)) == UID_ROOT) return 1;
     if(sscanf(file, user_path(euid)+"%s", tmp) ==1) return 1;
-    if(sscanf(euid, "%sobj", tmp) == 1 && sscanf(file,user_path(tmp)+"%s",tmp)
-      ==1) return 1;
+    if(sscanf(euid, "%sobj", tmp) == 1 && sscanf(file,user_path(tmp)+"%s",tmp) == 1) return 1;
+
     if(!access) load_access();
     if(!groups) load_groups();
     if(!privs) load_privs();
+
     fn = base_name(ob);
-    if(sscanf(file, REALMS_DIRS+"/%s", tmp) ||
-      sscanf(file, DOMAINS_DIRS+"/%s", tmp))
-  if(groups["ambassador"] && member_array(euid, groups["ambassador"])
-    != -1) return 0;
+
+    if(sscanf(file, REALMS_DIRS+"/%s", tmp) || sscanf(file, DOMAINS_DIRS+"/%s", tmp))
+        if(groups["ambassador"] && member_array(euid, groups["ambassador"]) != -1) return 0;
+
     if(!(path = explode(file, "/"))) path = ({});
     else while(sizeof(path) && (i=member_array("",path)) > -1)
-      path = exclude_array(path, i);
+        path = exclude_array(path, i);
+
     i = sizeof(path);
     while((i--) != -1) {
-  if(i== -1) file = "/";
-  else file = "/"+implode(path[0..(i)], "/");
-  if(access[file]) {
-      if(access[file]["all"] && access[file]["all"][ind] == 1) return 1;
-      else if(access[file][euid]) return access[file][euid][ind];
-      else {
-    j = sizeof(grps = keys(access[file]));
-    while(j--) {
-        if(groups[grps[j]] && member_array(euid, groups[grps[j]]) != -1
-          && access[file][grps[j]][ind] == 1) return 1;
-    }
-    return 0;
-      }
-  }
+        if(i== -1) file = "/";
+        else file = "/"+implode(path[0..(i)], "/");
+
+        if(access[file]) {
+            if(access[file]["all"] && access[file]["all"][ind] == 1) return 1;
+            else if(access[file][euid]) return access[file][euid][ind];
+            else {
+                j = sizeof(grps = keys(access[file]));
+                while(j--) {
+                    if( groups[grps[j]]
+                        && member_array(euid, groups[grps[j]]) != -1
+                        && access[file][grps[j]][ind] == 1
+                    ) return 1;
+                }
+                return 0;
+            }
+        }
     }
     return 0;
 }
@@ -456,12 +464,12 @@ object connect() {
     string err;
 
     if(err=catch(ob = clone_object(OB_LOGIN))) {
-      write("It looks like someone is working on the user object.\n");
-      log_file("master", err);
-      //this is odd, are we destructing master.c ???
-      destruct(this_object());
-      //don't return uninitialized ob
-      return 0;
+        write("It looks like someone is working on the user object.\n");
+        log_file("master", err);
+        //this is odd, are we destructing master.c ???
+        destruct(this_object());
+        //don't return uninitialized ob
+        return 0;
     }
     return ob;
 }
@@ -781,18 +789,22 @@ string get_ed_buffer_save_file_name(string file) {
       str+"dead.edit" : DIR_TMP+"/"+geteuid(this_player())+".edit");
 }
 
-int is_locked() { return MUD_IS_LOCKED;
+int is_locked()
+{
+    return MUD_IS_LOCKED;
 }
 
-
-int query_member_group(string who, string grp) {
+int query_member_group(string who, string grp)
+{
     if(!groups) load_groups();
-    if(groups[grp]) return (member_array(who, groups[grp]) != -1);
-    else return 0;
+
+    if (groups[grp])
+        return (member_array(who, groups[grp]) != -1);
+
+    return 0;
 }
 
 mapping query_groups() {
     if(!groups) load_groups();
     return copy(groups);
 }
-

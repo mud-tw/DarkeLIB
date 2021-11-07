@@ -14,7 +14,10 @@
         "*.tcc": "c",
         "cmath": "c",
         "complex": "c",
-        "system_error": "c"
+        "system_error": "c",
+        "*.h": "c",
+        "string": "c",
+        "sstream": "c"
     },
     "editor.insertSpaces": true,
     "editor.tabSize": 4,

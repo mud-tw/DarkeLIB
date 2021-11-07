@@ -19,6 +19,9 @@ int invis_exit(string str);
 #define NUMBER   ({ "two", "three", "four", "five", "six", "seven", "eight",\
                   "nine", "ten", "many" })
 
+#define CHT_NUMBER   ({ "兩", "三", "四", "五", "六", "七", "八",\
+                  "九", "十", "很多" })
+
 #define TMPLONG  ({ "north", "northeast", "east", "southeast", "south",\
                   "southwest", "west", "northwest", "up", "down", "in",\
                   "out", "enter","exit",})
@@ -43,7 +46,7 @@ string query_exit(string str) {
 string query_direction(string str) {
     int i;
 
-    if(str && destinations && 
+    if(str && destinations &&
       (i=member_array(str, values(destinations))) != -1)
         return keys(destinations)[i];
     else return ROOM_VOID;
@@ -97,7 +100,7 @@ int use_exit() {
     string verb;
     string *my_limbs;
     int i, flag;
-    
+
     if(this_player()->query_paralyzed()) {
         notify_fail("You are unable to move.\n");
         return 0;
@@ -174,7 +177,7 @@ varargs protected void set_exits(mixed dests, string *dirs) {
 
 void add_exit(string dest, string dir) {
     string path;
-  
+
     if(!dest || !dir) return;
     if(!destinations) destinations = ([]);
     path = "/"+implode(exclude_array(explode(base_name(this_object()), "/"),
@@ -215,24 +218,29 @@ string *query_obvious_exits() {
     return (exits);
 }
 
-string query_long_exits() {
+string query_long_exits()
+{
     int i, max;
     string str;
     string *sorties;
 
     if(skip_obvious) return "";
     if(!(i=sizeof(sorties = query_obvious_exits())))
-      return "There are no obvious exits.";
+        return "這裡沒有明顯的出口. ";
+        // return "There are no obvious exits.";
     if(i==1)
-      return "The only obvious exit is "+sorties[0]+".";
+        return "這裡只有一個出口: "+sorties[0] + ".";
+        // return "The only obvious exit is "+sorties[0]+".";
     if((max=i) > sizeof(NUMBER) + 1) max = sizeof(NUMBER)+1;
-    str = ("There are " + NUMBER[max - 2] + " obvious exits: ");
+    // str = ("There are " + NUMBER[max - 2] + " obvious exits: ");
+    str = ("這裡有" + CHT_NUMBER[max - 2] + "個明顯的出口: ");
     for(max = i, i = 0; i<max; i++) {
-	if(i == max-1) str += "and ";
-	str += sorties[i];
-	if(i == max -1) str += ".";
-	else if(max > 2) str += ", ";
-	else str += " ";
+	    // if(i == max-1) str += "and ";
+	    if(i == max-1) str += "和 ";
+	    str += sorties[i];
+	    if(i == max -1) str += ".";
+	    else if(max > 2) str += ", ";
+	    else str += " ";
     }
     return str;
 }

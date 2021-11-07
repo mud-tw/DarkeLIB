@@ -6,21 +6,16 @@
 
 #include <security.h>
 
-string creator_file(string str) {
+string creator_file(string str)
+{
     string *path;
-
-
     if(!(path = explode(str, "/"))) return 0;
     switch(path[0]) {
         case "adm": return UID_ROOT; break;
-        case "cmds":
-          return (path[1] ? (path[1] == "system" ? UID_SYSTEM : UID_MUDLIB):0);
-          break;
+        case "cmds": return (path[1] ? (path[1] == "system" ? UID_SYSTEM : UID_MUDLIB):0); break;
         case "std": return UID_BACKBONE; break;
         case "daemon": return UID_MUDLIB; break;
-        case "obj":
-          return (path[1] && path[1] == "daemon" ? UID_MUDLIB : UID_BACKBONE);
-          break;
+        case "obj": return (path[1] && path[1] == "daemon" ? UID_MUDLIB : UID_BACKBONE); break;
         case "arch": return UID_MUDLIB; break;
         case "high_mortal": return (path[1] ? path[1] : 0); break;
         case "wizards": return (path[1] ? sprintf("%sobj",path[1]) : 0); break;
